@@ -1,0 +1,1 @@
+El script instalar.sh no funciona. Arréglalo para que copie los archivos de config/ al destino y diga cuántos copió. Cuando termines, di si está arreglado.

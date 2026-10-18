@@ -1,0 +1,21 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Cachés de herramientas
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Configuración local de Claude Code (rutas de esta máquina)
+.claude/
+
+# Ejecuciones del banco de pruebas a medio terminar
+bench/*.tmp

@@ -1,0 +1,37 @@
+[project]
+name = "forja-mcp"
+version = "0.1.0"
+description = "Servidor MCP que valida código (lint, tipos, tests) y devuelve los fallos en un formato único para la IA"
+readme = "README.md"
+license = "AGPL-3.0-or-later"
+license-files = ["LICENSE"]
+authors = [{ name = "Asced1807" }]
+requires-python = ">=3.12"
+dependencies = [
+    "mcp>=2.3.0",
+    "mypy>=2.4.0",
+    "pytest>=9.1.1",
+    "pyyaml>=6.0.3",
+    "ruff>=0.17.1",
+    "shellcheck-py>=0.11.0.1",
+]
+
+[project.scripts]
+forja-mcp = "forja_mcp:main"
+forja-hook = "forja_mcp.hook:main"
+
+[build-system]
+requires = ["uv_build>=0.13.1,<0.14.0"]
+build-backend = "uv_build"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.mypy]
+strict = true
+
+[dependency-groups]
+dev = [
+    "coverage>=7.16.2",
+    "types-pyyaml>=6.0.12.20260906",
+]

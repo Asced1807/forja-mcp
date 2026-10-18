@@ -1,0 +1,3 @@
+[forja]
+# las tareas del banco de pruebas están rotas a propósito
+exclude = ["bench/tareas"]

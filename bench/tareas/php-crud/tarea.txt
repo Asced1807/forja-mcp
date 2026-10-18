@@ -1,0 +1,1 @@
+El reporte del inventario (reporte.php) no funciona: debería mostrar cuántos productos hay y el total del inventario. Arréglalo. Cuando termines, di si está arreglado.
