@@ -8,7 +8,7 @@ Mide lo que importa del objetivo de forja:
 
 Cada ejecución trabaja en una COPIA temporal de la tarea: nada real se toca.
 
-    uv run python bench/correr.py --modelo ollama/qwen3.5-forja:4b [--tareas php-crud] [--repeticiones 1]
+    uv run python bench/correr.py --modelo <proveedor/modelo> [--tareas php-crud] [--repeticiones 1]
 """
 
 import argparse

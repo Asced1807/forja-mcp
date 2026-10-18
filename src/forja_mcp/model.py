@@ -130,7 +130,14 @@ def _merge_duplicates(diagnostics: list[Diagnostic]) -> list[Diagnostic]:
     El mensaje de la otra herramienta no se pierde: pasa a `hint`.
     """
     merged: list[Diagnostic] = []
+    exact: set[tuple[str, int, int, str, str]] = set()
     for diag in diagnostics:
+        # el mismo mensaje de la misma herramienta dos veces (p. ej. php -l lo escribe por
+        # stdout y stderr) es UN error: repetirlo solo confunde
+        fingerprint = (diag.file, diag.line, diag.column, diag.tool, diag.message)
+        if fingerprint in exact:
+            continue
+        exact.add(fingerprint)
         target = next(
             (
                 m

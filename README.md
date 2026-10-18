@@ -3,7 +3,7 @@
 **Una IA que programa no necesita ser más lista: necesita poder comprobar lo que hace.**
 
 forja es un servidor [MCP](https://modelcontextprotocol.io) que se conecta a cualquier IA que
-programe (Claude Code, opencode, Cline… o un modelo gratuito en tu propio PC con Ollama) y le da
+programe (Claude Code, opencode, Cline… o un modelo gratuito en tu propio PC) y le da
 lo que le falta para trabajar en proyectos reales sin perderse: saber qué hay, saber qué está
 roto, saber si su cambio funciona **de verdad** y recordar los errores que ya cometió.
 
@@ -224,20 +224,6 @@ En `~/.config/opencode/opencode.jsonc`:
   "forja": { "type": "local", "command": ["<ruta>/forja-mcp/.venv/bin/forja-mcp"], "enabled": true }
 }
 ```
-
-### Modelo local gratuito (Ollama)
-
-Hace falta un modelo que haga *tool calling* de verdad (la familia qwen2.5-coder, por ejemplo,
-devuelve la llamada como texto y no ejecuta nada). Con 4 GB de VRAM funciona `qwen3.5:4b`:
-
-```sh
-ollama pull qwen3.5:4b
-ollama launch opencode --model qwen3.5:4b     # o configúralo como proveedor openai-compatible
-ollama launch claude --model qwen3.5:4b       # Claude Code contra el modelo local
-```
-
-Con modelos pequeños, desactiva en el proyecto los servidores MCP que no uses: cada
-herramienta extra ocupa contexto en todos los mensajes y le cuesta elegir la correcta.
 
 ## Estructura
 

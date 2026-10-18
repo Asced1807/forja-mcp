@@ -53,3 +53,8 @@ def test_merge_keeps_worst_severity_and_fixable() -> None:
     assert (merged.severity, merged.fixable) == ("error", True)
     assert merged.hint == "Remove import\nmypy: real error"
     assert (report.errors, report.warnings) == (1, 0)
+
+
+def test_identical_messages_from_same_tool_are_one() -> None:
+    report = _report(_diag("php -l", "x", "syntax error"), _diag("php -l", "x", "syntax error"))
+    assert report.errors == 1
