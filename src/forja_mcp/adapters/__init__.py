@@ -6,18 +6,19 @@ from forja_mcp.adapters.base import BaseAdapter
 from forja_mcp.adapters.compiled import GoAdapter, RustAdapter
 from forja_mcp.adapters.custom import CustomAdapter, disabled
 from forja_mcp.adapters.data import DataAdapter
+from forja_mcp.adapters.formal import DafnyAdapter, LeanAdapter
 from forja_mcp.adapters.python import PythonAdapter
 from forja_mcp.adapters.scripting import JsAdapter, LuaAdapter, PhpAdapter
 from forja_mcp.adapters.shell import FishAdapter, ShellAdapter
 
 ADAPTERS: list[BaseAdapter] = [
     PythonAdapter(), JsAdapter(), RustAdapter(), GoAdapter(), PhpAdapter(), LuaAdapter(),
-    ShellAdapter(), FishAdapter(), DataAdapter(), CustomAdapter(),
+    ShellAdapter(), FishAdapter(), DafnyAdapter(), LeanAdapter(), DataAdapter(), CustomAdapter(),
 ]
 
 _ROOT_MARKERS = (
     ".git", ".forja.toml", "pyproject.toml", "setup.py", "Cargo.toml", "package.json",
-    "go.mod", "composer.json",
+    "go.mod", "composer.json", "lakefile.lean", "lakefile.toml", "lean-toolchain",
 )
 
 

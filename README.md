@@ -1,25 +1,91 @@
-# forja-mcp
+# forja
 
-**Objetivo:** que cualquier IA —incluso un modelo pequeño y gratuito en local— trabaje
-en proyectos reales y grandes sin perderse, porque forja le dice, con el mínimo de
-palabras, qué hay en el proyecto, qué está roto exactamente, si su cambio funciona de
-verdad y qué error ya cometió antes en ese proyecto.
+**Una IA que programa no necesita ser más lista: necesita poder comprobar lo que hace.**
 
-| Dónde falla la IA | Respuesta de forja |
-|---|---|
-| Contexto limitado: lee archivos enteros y `.md` | `overview`, `outline`, `source` en cada error, respuestas compactas |
-| Dice "terminado" sin comprobar | `gate`; un paso sin comprobar nunca es `ok` |
-| No sabe probar un proyecto desconocido | detección multi-lenguaje + `.forja.toml` |
-| Se pierde en el bucle de errores | historial `fixed/new/seen`, errores agrupados por causa, campo `next` |
-| Repite errores que ya arregló | memoria SQLite por proyecto: `recall` y avisos de `repetido` |
-| Tests débiles dan falsa confianza | `mutate` |
-| Modelos pequeños: poco contexto, tool calling frágil | pocas herramientas, parámetros simples, salida mínima |
+forja es un servidor [MCP](https://modelcontextprotocol.io) que se conecta a cualquier IA que
+programe (Claude Code, opencode, Cline… o un modelo gratuito en tu propio PC con Ollama) y le da
+lo que le falta para trabajar en proyectos reales sin perderse: saber qué hay, saber qué está
+roto, saber si su cambio funciona **de verdad** y recordar los errores que ya cometió.
 
-**Principios:** funciona con cualquier cliente MCP y modelo · cada carácter cuenta ·
-nunca un falso éxito · sin internet ni `sudo` · no toca el código salvo `fix`.
+## Por qué existe
 
-**No es** un linter, una IA ni un IDE: es el traductor entre las herramientas que ya
-existen y la IA.
+Las IAs que programan fallan siempre en los mismos sitios, y no por falta de inteligencia:
+
+- **No ven el proyecto entero.** Su memoria de trabajo (el contexto) es limitada, y la gastan
+  orientándose: leen el README completo, listan carpetas, abren archivos enteros para encontrar
+  una función.
+- **Dicen "listo, funciona" sin haberlo comprobado.** Es el fallo más caro: te enteras tú, después.
+- **Repiten errores que ya arreglaron**, porque entre una sesión y otra no recuerdan nada.
+- **Se fían de tests que no prueban nada**: todo verde no significa que esté bien.
+- **Con modelos pequeños y gratuitos todo esto se multiplica**: menos contexto y más torpeza
+  usando herramientas.
+
+Las herramientas para comprobar código ya existen (compiladores, linters, tests, verificadores
+como Dafny o Lean), pero cada una habla su propio idioma y todas están pensadas para que las lea
+una persona.
+
+## Para qué sirve
+
+forja es el **traductor entre esas herramientas y la IA**. Le responde, en pocas palabras y
+siempre con el mismo formato, sea cual sea el lenguaje:
+
+1. **¿Qué hay en este proyecto?** — un mapa de una sola llamada, en vez de leer documentación.
+2. **¿Qué está roto exactamente?** — archivo, línea, el código afectado y qué hacer a continuación.
+3. **¿Mi cambio funciona de verdad?** — `ok` solo si todo se comprobó; nunca un éxito inventado.
+4. **¿Ya me equivoqué en esto antes?** — una memoria por proyecto que se llena sola.
+5. **¿Es correcto o solo lo parece?** — con Dafny y Lean, demostrado matemáticamente.
+
+## Cómo funciona
+
+```
+  tú: "el reporte no funciona, arréglalo"
+          │
+          ▼
+  ┌──────────────────┐   MCP   ┌──────────┐   php -l, pytest, cargo, go,
+  │ tu IA            │ ──────► │  forja   │ ─► shellcheck, dafny, lean…
+  │ (cualquiera)     │ ◄────── │          │
+  └──────────────────┘         └────┬─────┘
+          ▲   "corrige datos.php:12      │
+          │    (falta ;) y vuelve        ▼
+          │    a llamar a gate"     memoria del proyecto
+          └─────────────────────    (errores, repetidos, lecciones)
+```
+
+El ciclo de trabajo de la IA con forja:
+
+1. `overview` → entiende el proyecto sin leer archivos enteros.
+2. `recall` → mira qué errores se repiten en este proyecto.
+3. `outline` → encuentra la función y lee solo esas líneas.
+4. edita y llama a `gate` → si algo falla, la respuesta dice exactamente qué y dónde, y su campo
+   `next` dice qué hacer.
+5. repite hasta que `gate` diga `ok`. Solo entonces la tarea está terminada.
+
+## El compilador de IA: Dafny y Lean
+
+Un compilador convierte código en un programa y se puede confiar en él porque es determinista.
+Una IA no lo es: la misma petición puede dar código distinto, y a veces con errores. La
+verificación formal resuelve eso:
+
+- **el humano** escribe **qué** debe cumplirse (`requires`/`ensures` en Dafny, el enunciado de un
+  `theorem` en Lean) — unas pocas líneas fáciles de revisar;
+- **la IA** escribe el **cómo**;
+- **el verificador** demuestra que el código lo cumple. Si no, no pasa.
+
+Así no hace falta fiarse de la IA. forja vigila además las dos trampas que lo invalidarían:
+
+- **demostrar a medias** (`sorry`, `admit`, `axiom` en Lean; `assume`, `{:axiom}`,
+  `{:verify false}` en Dafny) → es un **error**, nunca un éxito;
+- **debilitar la especificación** para que sea fácil de cumplir → el humano la bloquea con
+  `forja-spec lock` y cualquier cambio posterior es un error. El bloqueo no se puede hacer desde
+  MCP: la IA no puede desbloquearse sola.
+
+## Principios
+
+Funciona con cualquier cliente MCP y cualquier modelo · cada carácter que recibe la IA cuenta ·
+nunca un falso éxito · no necesita internet ni `sudo` · no toca el código del proyecto salvo con
+`fix`, cuando se pide.
+
+**No es** un linter, ni una IA, ni un IDE: no sustituye a ninguna herramienta, las traduce.
 
 ## Herramientas
 
@@ -50,6 +116,8 @@ Cada respuesta trae `next`: el siguiente paso en una frase, para que un modelo p
 | fish | `fish --no-execute` | — |
 | Lua | `luac -p` | — |
 | JSON / YAML / TOML | interno | — |
+| **Dafny** | `dafny verify` + trampas + especificación bloqueada | — (verificar es más fuerte que probar) |
+| **Lean 4** | `lake build` / `lean` + trampas + especificación bloqueada | — |
 | **Cualquier otro** | `.forja.toml` | `.forja.toml` |
 
 Un proyecto con varios lenguajes se revisa **entero**. Para una herramienta que forja no conoce:
@@ -96,6 +164,32 @@ herramienta no llegó a ejecutarse, nada se da por resuelto.
 - `mutate` trabaja en copias temporales y se niega a empezar si los tests no pasan sin mutar.
 
 ## Instalación
+
+### Con Docker (recomendado: no instala nada en tu máquina)
+
+La imagen trae todas las herramientas: Python, PHP, Lua, fish, Node, Go, Rust, Dafny y Lean.
+
+```sh
+git clone https://github.com/Asced1807/forja-mcp && cd forja-mcp
+docker build -t forja-mcp .
+```
+
+Como servidor MCP, el proyecto se monta **en la misma ruta** para que las rutas coincidan, y
+la memoria en una carpeta tuya para que no se pierda entre sesiones:
+
+```sh
+docker run -i --rm --user "$(id -u):$(id -g)" -v "$PWD:$PWD" -w "$PWD" \
+  -v "$HOME/.local/share/forja:/data" forja-mcp
+```
+
+Para desarrollar forja sin instalar nada (los tests de Dafny y Lean incluidos):
+
+```sh
+docker run --rm --user "$(id -u):$(id -g)" -v "$PWD:/work" -w /work -e PYTHONPATH=/work/src \
+  -e PYTHONDONTWRITEBYTECODE=1 --entrypoint python forja-mcp -m pytest
+```
+
+### Sin Docker
 
 Requisitos: Python 3.12+ y [uv](https://docs.astral.sh/uv/). Las herramientas de cada lenguaje
 (php, cargo, go, node…) se usan si están instaladas; shellcheck, ruff y mypy vienen incluidas.
