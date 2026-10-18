@@ -260,9 +260,9 @@ pocas líneas, y `junit_run` cualquier runner de tests que escriba JUnit XML.
 
 Copyright (C) 2026 Asced1807
 
-forja-mcp es software libre: puedes usarlo, estudiarlo, modificarlo y compartirlo bajo los
-términos de la [GNU Affero General Public License v3.0](LICENSE) o posterior.
+forja-mcp es software libre bajo la [licencia BSD de 3 cláusulas](LICENSE) (BSD-3-Clause).
 
-En resumen: cualquiera puede usarlo y mejorarlo, pero debe mantener este aviso de autoría, y si
-distribuye una versión modificada **o la ofrece como servicio por la red**, tiene que publicar su
-código bajo la misma licencia. Las contribuciones son bienvenidas.
+En resumen: cualquiera puede usarlo, modificarlo y redistribuirlo, también dentro de proyectos
+cerrados o comerciales, siempre que mantenga este aviso de copyright y el texto de la licencia.
+Lo que no puede es usar el nombre del autor para promocionar sus derivados sin permiso.
+Las contribuciones son bienvenidas.

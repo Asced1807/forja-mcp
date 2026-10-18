@@ -3,7 +3,7 @@ name = "forja-mcp"
 version = "0.1.0"
 description = "Servidor MCP que valida código (lint, tipos, tests) y devuelve los fallos en un formato único para la IA"
 readme = "README.md"
-license = "AGPL-3.0-or-later"
+license = "BSD-3-Clause"
 license-files = ["LICENSE"]
 authors = [{ name = "Asced1807" }]
 requires-python = ">=3.12"
